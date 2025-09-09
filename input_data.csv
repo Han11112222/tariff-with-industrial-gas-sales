@@ -1,4 +1,18 @@
-﻿date,gas_TJ,util_daegu,util_korea
-2021-01,,,
-2021-02,,,
-2021-03,,,
+from pathlib import Path
+
+# 업로드가 없고, 리포에 기본 CSV가 있으면 자동 로드
+default_csv = Path("input_data.csv")
+if uploaded is None and default_csv.exists():
+    st.info("리포지토리의 input_data.csv를 자동으로 불러왔어.")
+    uploaded = str(default_csv)  # 파일 업로드 대신 경로를 전달
+
+@st.cache_data
+def _load_csv(file):
+    import pandas as pd
+    from pathlib import Path
+    p = Path(file)
+    if p.exists():
+        return pd.read_csv(p, parse_dates=["date"])
+    else:
+        # 업로드 객체인 경우
+        return pd.read_csv(file, parse_dates=["date"])
